@@ -47,3 +47,39 @@ class AuthController extends Controller
         }
     }
 }
+ public function profile($nik){
+        
+        $jemaat = Jemaat::where('nik',$nik)->first();
+        //dd($profile);
+        
+        return view('jemaat.profile', ['jemaat'=>$jemaat]);
+    }
+    public function editprofile(Request $request, $nik){
+        $nik = $request->nik;
+        $namafile = 'profile/';
+        if ($request->hasFile('profile')){
+            $file = $request->file("profile");
+            $extension = $file->getClientOriginalExtension();
+            $str = rand();
+            $result = md5($str);
+            $name = time() . "-" . $result . '.' . $extension;
+            $request->file('profile')->move('profile/', $name , $request->file('profile')->getClientOriginalName());
+            $namafile = $request->file('profile')->getClientOriginalName();
+            
+        }
+        $jemaat = DB::table('jemaat')->where('nik', $nik)->update([
+                
+            'nik' => $request->nik,
+            'name' => $request->name,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'alamat' => $request->alamat,
+            'status' => $request->status,
+            'status_pernikahan' => $request->status_pernikahan,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_baptis' => $request->tanggal_baptis,
+            'tanggal_sidih' => $request->tanggal_sidih,
+            'sektor_role' => $request->sektor_role,
+            'profile' => $namafile
+        ]);
+        return back()->with('success', 'Profil Sudah Berhasil Diubah');
+    }
