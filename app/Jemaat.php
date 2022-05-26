@@ -21,4 +21,11 @@ class Jemaat extends Model
     public function sektor(){
         return $this->belongsTo("App\Sektor", "sektor_id", "id");
     }
+      public function getAvatar()
+    {
+        if (!$this->profile) {
+            return asset('profile/default.png');
+        }
+        return asset('profile/' . $this->profile);
+    }
 }
